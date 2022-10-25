@@ -61,9 +61,9 @@ jobs:
   #          . venv/bin/activate
   #          make lint
   
-    workflows:
-      my_workflow:
-        - create_infrastructure
+workflows:
+  my_workflow:
+    - create_infrastructure
   #    - build
   #    - test
   #    - promote
