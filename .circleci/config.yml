@@ -14,8 +14,8 @@ jobs:
           command: |
             pip install --upgrade pip
             apk add --update tar gzip ansible nodejs npm curl python jq
-            curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-            sudo mv /tmp/eksctl /usr/local/bin 
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            sudo mv /tmp/eksctl /usr/local/bin           
             eksctl create cluster --name capstone --region=us-east-1
         
       # Fail the job intentionally to simulate an error.
