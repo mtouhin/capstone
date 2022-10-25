@@ -6,18 +6,18 @@ version: 2.1
 jobs:
   create_infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - run:
           name: install dependencies
           command: |
-            #pip install --upgrade pip
-            #pip install curl ;
-            #curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-            #sudo mv /tmp/eksctl /usr/local/bin ;
-            #eksctl create cluster
-            eksctl create cluster --name eksctl-demo --region=us-east-1
+            pip install --upgrade pip
+            apk add --update tar gzip ansible nodejs npm curl python jq
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+            sudo mv /tmp/eksctl /usr/local/bin 
+            eksctl create cluster --name capstone --region=us-east-1
+        
       # Fail the job intentionally to simulate an error.
       # Uncomment the line below if you want to fail the current step
       # - run: return 1
