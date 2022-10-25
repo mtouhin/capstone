@@ -3,10 +3,7 @@
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
 version: 2.1
-<<<<<<< HEAD
-=======
 jobs:
->>>>>>> refs/remotes/origin/main
   create_infrastructure:
     docker:
       - image: python:3.7-alpine3.11
@@ -19,7 +16,6 @@ jobs:
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
             sudo mv /tmp/eksctl /usr/local/bin ;
             eksctl create cluster
-
         
       # Fail the job intentionally to simulate an error.
       # Uncomment the line below if you want to fail the current step
