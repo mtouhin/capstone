@@ -12,7 +12,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            pip install --upgrade pip
+            #pip install --upgrade pip
             #pip install curl ;
             #curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
             #sudo mv /tmp/eksctl /usr/local/bin ;
