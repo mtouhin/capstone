@@ -17,7 +17,7 @@ jobs:
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
             sudo mv /tmp/eksctl /usr/local/bin ;
             eksctl create cluster
-       - persist_to_workspace:
+      - persist_to_workspace:
           root: ~/
         
       # Fail the job intentionally to simulate an error.
