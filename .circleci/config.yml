@@ -2,9 +2,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
-version: 2
-jobs:
-
+version: 2.1
   create_infrastructure:
     docker:
       - image: python:3.7-alpine3.11
