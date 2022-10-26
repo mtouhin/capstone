@@ -143,6 +143,6 @@ workflows:
       - create_infrastructure:
           requires: [build]
       - configure_infrastructure:
-          requires: [build]
-      - cleanup:
           requires: [create_infrastructure]
+      - cleanup:
+          requires: [create_infrastructure, configure_infrastructure]
