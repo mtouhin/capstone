@@ -93,8 +93,16 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            ./run_docker.sh
-            ./upload_docker.sh
+            dockerpath=mtouhin/micro
+            
+            docker build --tag=micro .
+            docker image ls
+            
+            docker login --username=mtouhin --email=mtouhin@yahoo.com
+            docker tag micro $dockerpath  
+            echo "Docker ID and Image: $dockerpath"
+
+            docker push $dockerpath
               
   create_infrastructure:
     docker:
