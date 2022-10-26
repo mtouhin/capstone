@@ -13,7 +13,8 @@ commands:
           when: on_fail
           command: |
             # Your code here
-            eksctl delete cluster --name eksctl-capstone-cluster
+            eksctl delete cluster --name capstone
+            aws cloudformation delete-stack --stack-name eks-capstone-cluster
 
 jobs:
 
@@ -73,14 +74,49 @@ jobs:
             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
             install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
             kubectl version --client
+ 
+      - run:
+          name: install authenticator
+          command: |
+            curl -Lo aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.5.9/aws-iam-authenticator_0.5.9_linux_amd64
+            chmod +x ./aws-iam-authenticator
+            mkdir -p $HOME/bin && cp ./aws-iam-authenticator $HOME/bin/aws-iam-authenticator && export PATH=$PATH:$HOME/bin
+            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+            aws-iam-authenticator help
             
       - run: 
-          name: create dependencies
+          name: create infrastructure
           command: |
             eksctl create cluster --name capstone --region=us-east-1
             aws eks describe-cluster --name capstone --query cluster.endpoint --output text
             eksctl get nodegroups --cluster eksctl-capstone-cluster
   
+  configure_infrastructure:
+    docker:
+      # Docker image here that supports Ansible
+      - image: python:3.7-alpine3.11
+    steps:
+      # Checkout code from git
+      - checkout
+
+      # attach workspace
+      - attach_workspace:
+          at: ~/
+
+      - run:
+          name: Install dependencies
+          command: |
+            # Your code here
+            apk add --update tar gzip ansible nodejs npm curl python jq
+            pip install awscli
+
+      - run:
+          name: Get dns name
+          command: |
+            URLS=$(aws ec2 describe-instances --filters "Name=tag:eks:cluster-name,Values=capstone" --query "Reservations[*].Instances[*].PublicDnsName" --output text) ;
+            curl -H "Content-Type: text/plain" -H "token: HbfEaJNUXNPZ2MNx4KVzaV" --request PUT --data "$URLS" https://kvdb.io/HbfEaJNUXNPZ2MNx4KVzaV/migration_$\{CIRCLE_WORKFLOW_ID:0:7\}
+            echo $URLS
+            
   cleanup:
     docker:
       - image: python:3.7-alpine3.11
@@ -105,6 +141,8 @@ workflows:
     jobs:
       - build
       - create_infrastructure:
+          requires: [build]
+      - configure_infrastructure:
           requires: [build]
       - cleanup:
           requires: [create_infrastructure]
