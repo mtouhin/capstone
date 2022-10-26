@@ -32,6 +32,8 @@ jobs:
             mv /tmp/eksctl /usr/local/bin
             eksctl delete nodegroup --cluster capstone --region=us-east-1
             eksctl delete cluster --name capstone --region=us-east-1
+            aws cloudformation delete-stack --stack-name eks-capstone-cluster
+            aws cloudformation delete-stack --stack-name eksctl-capstone-nodegroup*
         
       # Fail the job intentionally to simulate an error.
       # Uncomment the line below if you want to fail the current step
