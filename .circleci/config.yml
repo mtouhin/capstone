@@ -18,10 +18,8 @@ jobs:
             mv /tmp/eksctl /usr/local/bin           
             eksctl create cluster --name capstone --region=us-east-1
   
-  
-  
   cleanup:
-        docker:
+    docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
