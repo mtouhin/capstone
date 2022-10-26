@@ -4,7 +4,7 @@
 #
 version: 2.1
 
-ommands:
+commands:
   destroy-environment:
     description: Destroy  cluster   
     steps:
