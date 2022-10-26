@@ -99,7 +99,7 @@ jobs:
             docker build --tag=micro .
             docker image ls
             
-            docker login --username=mtouhin --email=mtouhin@yahoo.com
+            docker login --username=mtouhin --password=Blackie1294570!
             docker tag micro $dockerpath  
             echo "Docker ID and Image: $dockerpath"
 
