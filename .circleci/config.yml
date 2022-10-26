@@ -88,14 +88,14 @@ jobs:
       - image: docker:17.05.0-ce-git
     working_directory: ~/repo
       
-      steps:
-        - checkout
+    steps:
+      - checkout
 
-        - run:
-            name: Build application Docker image
-            command: |
-              ./run_docker.sh
-              ./upload_docker.sh
+      - run:
+          name: Build application Docker image
+          command: |
+            ./run_docker.sh
+            ./upload_docker.sh
               
   create_infrastructure:
     docker:
