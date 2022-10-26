@@ -6,7 +6,7 @@ version: 2.1
 
 commands:
   destroy-environment:
-    description: Destroy  cluster   
+    description: Destroy cluster   
     steps:
       - run:
           name: Destroy environments
@@ -65,7 +65,6 @@ jobs:
           name: install dependencies
           command: |
             pip install --upgrade pip
-            apk add --update curl python 
             # Install hadolint
             wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 &&\
             chmod +x /bin/hadolint
