@@ -74,8 +74,8 @@ jobs:
           name: run lint
           command: |
             . venv/bin/activate
-            STATUS=$(make lint)
-            if curl $STATUS_URL | grep "10.00/10"
+            make lint >> output.txt
+            if grep '10.00/10' output.txt
             then
               exit 0
             else
