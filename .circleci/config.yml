@@ -13,7 +13,6 @@ commands:
           when: on_fail
           command: |
             # Your code here
-            eksctl delete cluster --name capstone
             aws cloudformation delete-stack --stack-name eks-capstone-cluster
 
 jobs:
@@ -86,10 +85,10 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            dockerpath=mtouhin/micro
+            dockerpath=$DOCKER_PATH
             docker build --tag=micro .
             docker image ls
-            docker login --username=mtouhin --password=Blackie1294570!
+            docker login --username=$DOCKER_USER --password=$DOCKER_PASS
             docker tag micro $dockerpath  
             echo "Docker ID and Image: $dockerpath"
             docker push $dockerpath
@@ -124,7 +123,7 @@ jobs:
       - run: 
           name: create infrastructure
           command: |
-            eksctl create cluster --name capstone --region=us-east-1
+            eksctl create cluster --name capstone --region=us-east-2
             aws eks describe-cluster --name capstone --query cluster.endpoint --output text
             eksctl get nodegroups --cluster capstone
       - destroy-environment
