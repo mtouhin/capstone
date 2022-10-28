@@ -96,7 +96,36 @@ jobs:
             docker tag micro $dockerpath  
             echo "Docker ID and Image: $dockerpath"
             docker push $dockerpath
-              
+  
+  test_cluster:
+    docker:
+      - image: 'cimg/python:3.10'
+    steps:
+      - kubernetes/install:
+          kubectl-version: v1.22.0
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: capstone
+      - run:
+          name: Test cluster
+          command: |
+            kubectl get nodes
+            kubectl get deploy,rs,svc,pods
+
+  deploy_infrastructure:
+    docker:
+      - image: 'cimg/python:3.10'
+    steps:
+      - checkout
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: 'EKS'
+          install-kubectl: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: false
+          resource-file-path: deployment.yaml
+          resource-name: deployment
+      - run:
+          kubectl apply -f service.yaml
+
   create_infrastructure:
     docker:
       - image: python:3.7-alpine3.11
@@ -125,9 +154,9 @@ jobs:
       - run: 
           name: create infrastructure
           command: |
-            kubectl get nodes
-            kubectl create deploy micro --image=mtouhin/micro:latest
-            kubectl get deploy,rs,svc,pods
+            #kubectl get nodes
+            #kubectl create deploy micro --image=mtouhin/micro:latest
+            #kubectl get deploy,rs,svc,pods
             #eksctl create cluster --name capstone --region=us-east-1
             #aws eks describe-cluster --name capstone --query cluster.endpoint --output text
             #eksctl get nodegroups --cluster capstone
@@ -187,8 +216,12 @@ workflows:
       - aws-eks/create-cluster:
           cluster-name: capstone
           requires: [build, test_docker, docker_build_upload]
-      - create_infrastructure:
+      - test_cluster:
           requires: [build, test_docker, docker_build_upload, aws-eks/create-cluster]
+      - deploy_infrastructure:
+          requires: [test_cluster]
+      #- create_infrastructure:
+      #    requires: [build, test_docker, docker_build_upload, aws-eks/create-cluster]
       - aws-eks/delete-cluster:
           cluster-name: capstone
           requires: [create_infrastructure]
