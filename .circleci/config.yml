@@ -125,7 +125,7 @@ jobs:
       - run: 
           name: create infrastructure
           command: |
-            #kubectl get nodes
+            kubectl get nodes
             kubectl create deploy micro --image=mtouhin/micro:latest
             kubectl get deploy,rs,svc,pods
             #eksctl create cluster --name capstone --region=us-east-1
@@ -185,10 +185,13 @@ workflows:
       - docker_build_upload:
           requires: [test_docker]
       - aws-eks/create-cluster:
-          cluster-name: eksctl-capstone-cluster
+          cluster-name: capstone
           requires: [build, test_docker, docker_build_upload]
-      #- create_infrastructure:
-      #    requires: [build, test_docker, docker_build_upload]
+      - create_infrastructure:
+          requires: [build, test_docker, docker_build_upload, aws-eks/create-cluster]
+      - aws-eks/delete-cluster:
+          cluster-name: capstone
+          requires: [create_infrastructure]
       #- configure_infrastructure:
       #    requires: [create_infrastructure]
       #- cleanup:
