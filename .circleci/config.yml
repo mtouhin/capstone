@@ -181,7 +181,7 @@ workflows:
       - docker_build_upload:
           requires: [test_docker]
       - create_infrastructure:
-          requires: [build]
+          requires: [build, test_docker, docker_build_upload]
       - configure_infrastructure:
           requires: [create_infrastructure]
       #- cleanup:
