@@ -111,10 +111,10 @@ jobs:
           install-kubectl: true
       - kubernetes/create-or-update-resource:
           get-rollout-status: false
-          resource-file-path: deployment.yaml
+          resource-file-path: deployment.yml
           resource-name: deployment
       - run:
-          kubectl apply -f service.yaml
+          kubectl apply -f service.yml
 
       # clean up if fails    
       - destroy-environment
@@ -122,18 +122,18 @@ jobs:
 workflows:
   my_workflow:
     jobs:
-      - build
-      - test_docker:
-          requires: [build]
-      - docker_build_upload:
-          requires: [test_docker]
-      - aws-eks/create-cluster:
-          cluster-name: capstone
-          requires: [docker_build_upload]
-      - test_cluster:
-          requires: [aws-eks/create-cluster]
-      - deploy_infrastructure:
-          requires: [test_cluster]
+      #- build
+      #- test_docker:
+      #    requires: [build]
+      #- docker_build_upload:
+      #    requires: [test_docker]
+      #- aws-eks/create-cluster:
+      #    cluster-name: capstone
+      #    requires: [docker_build_upload]
+      #- test_cluster:
+      #    requires: [aws-eks/create-cluster]
+      - deploy_infrastructure
+      #    requires: [test_cluster]
       - aws-eks/delete-cluster:
           cluster-name: capstone
           requires: [deploy_infrastructure]
