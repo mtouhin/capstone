@@ -7,6 +7,7 @@ orbs:
   aws-eks: circleci/aws-eks@2.2.0
   aws-cli: circleci/aws-cli@1.4.0
   kubernetes: circleci/kubernetes@1.3
+  anchore: anchore/anchore-engine@1.0.0
 
 commands:
   destroy-environment:
@@ -87,6 +88,17 @@ jobs:
             echo "Docker ID and Image: $dockerpath"
             docker push $dockerpath
   
+  docker_security_scan:
+    executor: anchore/anchore_engine
+    steps:
+      - checkout
+      - run:
+          name: build container
+          command: docker build -tag=micro .
+      - anchore/analyze_local_image:
+          image_name: micro
+          timeout: '500'
+
   test_cluster:
     docker:
       - image: 'cimg/python:3.10'
@@ -116,24 +128,23 @@ jobs:
       - run:
           kubectl apply -f service.yml
 
-      # clean up if fails    
-      - destroy-environment
-
 workflows:
   my_workflow:
     jobs:
-      #- build
-      #- test_docker:
-      #    requires: [build]
-      #- docker_build_upload:
-      #    requires: [test_docker]
-      #- aws-eks/create-cluster:
-      #    cluster-name: capstone
-      #    requires: [docker_build_upload]
-      #- test_cluster:
-      #    requires: [aws-eks/create-cluster]
-      - deploy_infrastructure
-      #    requires: [test_cluster]
-      - aws-eks/delete-cluster:
+      - build
+      - test_docker:
+          requires: [build]
+      - docker_build_upload:
+          requires: [test_docker]
+      - docker_security_scan:
+          requires: [docker_build_upload]
+      - aws-eks/create-cluster:
           cluster-name: capstone
-          requires: [deploy_infrastructure]
+          requires: [docker_build_upload]
+      - test_cluster:
+          requires: [aws-eks/create-cluster]
+      - deploy_infrastructure:
+          requires: [test_cluster]
+      #- aws-eks/delete-cluster:
+      #    cluster-name: capstone
+      #    requires: [deploy_infrastructure]
