@@ -115,7 +115,7 @@ jobs:
           resource-name: deployment
       - run:
           kubectl apply -f service.yaml
-          
+
       # clean up if fails    
       - destroy-environment
 
@@ -129,9 +129,9 @@ workflows:
           requires: [test_docker]
       - aws-eks/create-cluster:
           cluster-name: capstone
-          requires: [build, test_docker, docker_build_upload]
+          requires: [docker_build_upload]
       - test_cluster:
-          requires: [build, test_docker, docker_build_upload, aws-eks/create-cluster]
+          requires: [aws-eks/create-cluster]
       - deploy_infrastructure:
           requires: [test_cluster]
       - aws-eks/delete-cluster:
