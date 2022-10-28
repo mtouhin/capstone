@@ -23,10 +23,8 @@ jobs:
       # Use the same Docker base as the project
       - image: python:3.7.3-stretch
     working_directory: ~/repo
-    
     steps:
       - checkout
-  
      # Download and cache dependencies
       - restore_cache:
           keys:
@@ -39,7 +37,6 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             make install
-            
       - save_cache:
           paths:
             - ./venv
@@ -50,17 +47,14 @@ jobs:
         # Use the same Docker base as the project
       - image: python:3.7.3-stretch
     working_directory: ~/repo
-    
     steps:
       - checkout
-      
       # Download and cache dependencies
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-              
       - run:
           name: install dependencies
           command: |
@@ -68,8 +62,7 @@ jobs:
             # Install hadolint
             wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 &&\
             chmod +x /bin/hadolint
-            
-          # run lint!
+      # run lint!
       - run:
           name: run lint
           command: |
@@ -77,6 +70,7 @@ jobs:
             make lint >> output.txt
             if grep '10.00/10' output.txt
             then
+              echo "linting PASSED"
               exit 0
             else
               exit 1
@@ -86,23 +80,18 @@ jobs:
     docker:
       - image: docker:17.05.0-ce-git
     working_directory: ~/repo
-      
     steps:
       - checkout
       - setup_remote_docker
-
       - run:
           name: Build application Docker image
           command: |
             dockerpath=mtouhin/micro
-            
             docker build --tag=micro .
             docker image ls
-            
             docker login --username=mtouhin --password=Blackie1294570!
             docker tag micro $dockerpath  
             echo "Docker ID and Image: $dockerpath"
-
             docker push $dockerpath
               
   create_infrastructure:
@@ -139,6 +128,7 @@ jobs:
             aws eks describe-cluster --name capstone --query cluster.endpoint --output text
             eksctl get nodegroups --cluster capstone
       - destroy-environment
+      
   configure_infrastructure:
     docker:
       # Docker image here that supports Ansible
@@ -146,7 +136,6 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-
       # attach workspace
       - attach_workspace:
           at: ~/
@@ -191,9 +180,9 @@ workflows:
           requires: [build]
       - docker_build_upload:
           requires: [test_docker]
-      #- create_infrastructure:
-      #    requires: [build]
-      #- configure_infrastructure:
-      #    requires: [create_infrastructure]
+      - create_infrastructure:
+          requires: [build]
+      - configure_infrastructure:
+          requires: [create_infrastructure]
       #- cleanup:
       #    requires: [create_infrastructure, configure_infrastructure]
