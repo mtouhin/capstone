@@ -123,7 +123,7 @@ jobs:
       - run: 
           name: create infrastructure
           command: |
-            kubectl get nodes
+            #kubectl get nodes
             kubectl create deploy micro --image=mtouhin/micro:latest
             kubectl get deploy,rs,svc,pods
             #eksctl create cluster --name capstone --region=us-east-1
