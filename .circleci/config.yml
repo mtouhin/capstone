@@ -224,7 +224,7 @@ workflows:
       #    requires: [build, test_docker, docker_build_upload, aws-eks/create-cluster]
       - aws-eks/delete-cluster:
           cluster-name: capstone
-          requires: [create_infrastructure]
+          requires: [deploy_infrastructure]
       #- configure_infrastructure:
       #    requires: [create_infrastructure]
       #- cleanup:
