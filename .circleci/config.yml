@@ -95,7 +95,7 @@ jobs:
       - run: 
           name: Build docker
           command: |
-            docker build - tag=micro .
+            docker build --tag=micro .
       - anchore/analyze_local_image:
           image_name: micro
           timeout: '500'
