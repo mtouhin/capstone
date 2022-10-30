@@ -92,6 +92,7 @@ jobs:
     executor: anchore/anchore_engine
     steps:
       - checkout
+      - setup_remote_docker
       - run: 
           name: Build docker
           command: |
@@ -99,6 +100,9 @@ jobs:
       - anchore/analyze_local_image:
           image_name: micro
           timeout: '500'
+      - anchore/parse_reports
+      - store_artifacts:
+          path: anchore-reports
 
   test_cluster:
     docker:
