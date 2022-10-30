@@ -100,7 +100,7 @@ jobs:
             docker image ls
       - anchore/analyze_local_image:
           dockerfile_path: ./Dockerfile
-          image_name: micro
+          image_name: micro:latest
           timeout: '500'
       - anchore/parse_reports
       - store_artifacts:
