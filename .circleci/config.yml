@@ -133,11 +133,11 @@ workflows:
           requires: [build]
       - docker_build_upload:
           requires: [test_docker]
-      - docker_security_scan:
-          requires: [docker_build_upload]
+      #- docker_security_scan:
+          #requires: [docker_build_upload]
       - aws-eks/create-cluster:
           cluster-name: capstone
-          requires: [docker_security_scan]
+          requires: [docker_build_upload]
       - test_cluster:
           requires: [aws-eks/create-cluster]
       - deploy_infrastructure:
