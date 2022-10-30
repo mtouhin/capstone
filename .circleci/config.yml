@@ -7,7 +7,7 @@ orbs:
   aws-eks: circleci/aws-eks@2.2.0
   aws-cli: circleci/aws-cli@1.4.0
   kubernetes: circleci/kubernetes@1.3
-  anchore: anchore/anchore-engine@1.0.0
+  anchore: anchore/anchore-engine@1.9.0
 
 commands:
   destroy-environment:
@@ -133,11 +133,11 @@ workflows:
           requires: [build]
       - docker_build_upload:
           requires: [test_docker]
-      #- docker_security_scan:
-          #requires: [docker_build_upload]
+      - docker_security_scan:
+          requires: [docker_build_upload]
       - aws-eks/create-cluster:
           cluster-name: capstone
-          requires: [docker_build_upload]
+          requires: [docker_security_scan]
       - test_cluster:
           requires: [aws-eks/create-cluster]
       - deploy_infrastructure:
