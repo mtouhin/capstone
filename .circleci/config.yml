@@ -97,7 +97,9 @@ jobs:
           name: Build docker
           command: |
             docker build --tag=micro .
+            docker image ls
       - anchore/analyze_local_image:
+          dockerfile_path: ./Dockerfile
           image_name: micro
           timeout: '500'
       - anchore/parse_reports
