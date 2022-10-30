@@ -92,9 +92,6 @@ jobs:
     executor: anchore/anchore_engine
     steps:
       - checkout
-      - run:
-          name: build container
-          command: docker build --tag=micro .
       - anchore/analyze_local_image:
           image_name: micro
           timeout: '500'
