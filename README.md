@@ -10,6 +10,7 @@ You are given a pre-trained, `sklearn` model that has been trained to predict ho
 * Test your project code using linting
 * Complete a Dockerfile to containerize this application
 * Upload docker image to a docker hub repo
+* Docker scan using archengine
 * Deploy a kubernetes cluster using cloud formation
 * Check when kubernetes cluster up and running
 * Deploy application using a load balancer
